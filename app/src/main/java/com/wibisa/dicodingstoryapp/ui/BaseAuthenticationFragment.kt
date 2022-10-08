@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.wibisa.dicodingstoryapp.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BaseAuthenticationFragment : Fragment() {
 
     override fun onCreateView(

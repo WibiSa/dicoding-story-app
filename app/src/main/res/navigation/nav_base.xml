@@ -9,10 +9,24 @@
         android:id="@+id/baseAuthentication"
         android:name="com.wibisa.dicodingstoryapp.ui.BaseAuthenticationFragment"
         android:label="fragment_base_authentication"
-        tools:layout="@layout/fragment_base_authentication" />
+        tools:layout="@layout/fragment_base_authentication" >
+        <action
+            android:id="@+id/action_baseAuthentication_to_baseMainFlow"
+            app:destination="@id/baseMainFlow"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_base"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/baseMainFlow"
         android:name="com.wibisa.dicodingstoryapp.ui.BaseMainFlowFragment"
         android:label="fragment_base_main_flow"
-        tools:layout="@layout/fragment_base_main_flow" />
+        tools:layout="@layout/fragment_base_main_flow" >
+        <action
+            android:id="@+id/action_baseMainFlow_to_baseAuthentication"
+            app:destination="@id/baseAuthentication"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_base"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

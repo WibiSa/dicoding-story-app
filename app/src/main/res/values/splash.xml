@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SplashscreenApi" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@color/purple_500</item>
+        <item name="postSplashScreenTheme">@style/Theme.DicodingStoryApp</item>
+    </style>
+</resources>
