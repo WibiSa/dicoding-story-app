@@ -21,7 +21,11 @@
         android:id="@+id/storyDetails"
         android:name="com.wibisa.dicodingstoryapp.ui.storydetails.StoryDetailsFragment"
         android:label="fragment_story_details"
-        tools:layout="@layout/fragment_story_details" />
+        tools:layout="@layout/fragment_story_details" >
+        <argument
+            android:name="story"
+            app:argType="com.wibisa.dicodingstoryapp.core.data.remote.response.Story" />
+    </fragment>
     <fragment
         android:id="@+id/addStory"
         android:name="com.wibisa.dicodingstoryapp.ui.addstory.AddStoryFragment"

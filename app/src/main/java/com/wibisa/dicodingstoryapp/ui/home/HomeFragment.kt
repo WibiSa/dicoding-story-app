@@ -13,6 +13,9 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.wibisa.dicodingstoryapp.R
+import com.wibisa.dicodingstoryapp.adapter.StoriesAdapter
+import com.wibisa.dicodingstoryapp.adapter.StoryListener
+import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.ApiResult
 import com.wibisa.dicodingstoryapp.core.util.showToast
 import com.wibisa.dicodingstoryapp.databinding.FragmentHomeBinding
@@ -24,7 +27,9 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var adapter: StoriesAdapter
     private val viewModel: HomeViewModel by viewModels()
+    private val mainNavController: NavController? by lazy { view?.findNavController() }
     private val baseNavController: NavController? by lazy { activity?.findNavController(R.id.base_nav_host) }
 
     override fun onCreateView(
@@ -39,10 +44,60 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeUserPreferencesForGetStories()
+
+        observeStoriesUiState()
+
         observeLogoutUiState()
+
+        componentUiSetup()
+    }
+
+    private fun componentUiSetup() {
 
         binding.btnLogout.setOnClickListener {
             makeLogoutDialogAlert()
+        }
+
+        adapter = StoriesAdapter(StoryListener {
+            val action = HomeFragmentDirections.actionHomeScreenToStoryDetails(it)
+            mainNavController?.navigate(action)
+        })
+        binding.rvStories.adapter = adapter
+    }
+
+    private fun observeUserPreferencesForGetStories() {
+        viewModel.userPreferences.observe(viewLifecycleOwner) {
+            getStories(it)
+        }
+    }
+
+    private fun getStories(userPreferences: UserPreferences) {
+        viewModel.getAllStories(userPreferences)
+    }
+
+    // TODO: swipe to refresh!
+
+    private fun observeStoriesUiState() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.storiesUiState.collect { ui ->
+                    when (ui) {
+                        is ApiResult.Success -> {
+                            adapter.submitList(ui.data)
+                            viewModel.getAllStoriesCompleted()
+                        }
+                        is ApiResult.Loading -> {
+                            // TODO: loading!
+                        }
+                        is ApiResult.Error -> {
+                            requireContext().showToast(ui.message)
+                            viewModel.getAllStoriesCompleted()
+                        }
+                        else -> {}
+                    }
+                }
+            }
         }
     }
 
@@ -73,7 +128,9 @@ class HomeFragment : Fragment() {
                             requireContext().showToast(logoutUi.data)
                             viewModel.logoutCompleted()
                         }
-                        is ApiResult.Loading -> {}
+                        is ApiResult.Loading -> {
+                            // TODO: loading!
+                        }
                         is ApiResult.Error -> {
                             requireContext().showToast(logoutUi.message)
                             viewModel.logoutCompleted()
