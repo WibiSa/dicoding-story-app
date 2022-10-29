@@ -59,6 +59,10 @@ class HomeFragment : Fragment() {
             makeLogoutDialogAlert()
         }
 
+        binding.btnAddStory.setOnClickListener {
+            mainNavController?.navigate(R.id.action_homeScreen_to_addStory)
+        }
+
         adapter = StoriesAdapter(StoryListener {
             val action = HomeFragmentDirections.actionHomeScreenToStoryDetails(it)
             mainNavController?.navigate(action)

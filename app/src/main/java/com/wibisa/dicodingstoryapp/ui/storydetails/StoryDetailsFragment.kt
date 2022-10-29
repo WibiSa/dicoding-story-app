@@ -30,6 +30,11 @@ class StoryDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        bindStoryToView(view)
+    }
+
+    private fun bindStoryToView(view: View) {
+
         binding.apply {
             Glide.with(view).load(args.story.photoUrl).placeholder(R.color.gray).centerCrop()
                 .into(imgPhoto)
