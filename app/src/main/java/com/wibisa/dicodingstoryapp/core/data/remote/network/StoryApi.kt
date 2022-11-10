@@ -1,8 +1,10 @@
 package com.wibisa.dicodingstoryapp.core.data.remote.network
 
+import com.wibisa.dicodingstoryapp.core.data.remote.response.AddNewStoryNetwork
 import com.wibisa.dicodingstoryapp.core.data.remote.response.AllStoriesNetwork
 import com.wibisa.dicodingstoryapp.core.data.remote.response.LoginResponse
 import com.wibisa.dicodingstoryapp.core.data.remote.response.RegisterResponse
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface StoryApi {
@@ -26,4 +28,12 @@ interface StoryApi {
     suspend fun getAllStories(
         @Header("Authorization") token: String
     ): AllStoriesNetwork
+
+    @Multipart
+    @POST("stories")
+    suspend fun addStory(
+        @Header("Authorization") token: String,
+        @Part description: MultipartBody.Part,
+        @Part photo: MultipartBody.Part
+    ): AddNewStoryNetwork
 }

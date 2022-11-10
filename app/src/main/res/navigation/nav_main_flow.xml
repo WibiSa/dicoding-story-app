@@ -14,8 +14,8 @@
             android:id="@+id/action_homeScreen_to_storyDetails"
             app:destination="@id/storyDetails" />
         <action
-            android:id="@+id/action_homeScreen_to_addStory"
-            app:destination="@id/addStory" />
+            android:id="@+id/action_homeScreen_to_add_story_flow"
+            app:destination="@id/add_story_flow" />
     </fragment>
     <fragment
         android:id="@+id/storyDetails"
@@ -26,9 +26,29 @@
             android:name="story"
             app:argType="com.wibisa.dicodingstoryapp.core.data.remote.response.Story" />
     </fragment>
-    <fragment
-        android:id="@+id/addStory"
-        android:name="com.wibisa.dicodingstoryapp.ui.addstory.AddStoryFragment"
-        android:label="fragment_add_story"
-        tools:layout="@layout/fragment_add_story" />
+    <navigation android:id="@+id/add_story_flow"
+        app:startDestination="@id/addStory">
+        <fragment
+            android:id="@+id/camera"
+            android:name="com.wibisa.dicodingstoryapp.ui.camera.CameraFragment"
+            android:label="fragment_camera"
+            tools:layout="@layout/fragment_camera" />
+        <fragment
+            android:id="@+id/cameraPermission"
+            android:name="com.wibisa.dicodingstoryapp.ui.permission.CameraPermissionFragment"
+            android:label="CameraPermissionFragment">
+            <action
+                android:id="@+id/action_cameraPermission_to_camera"
+                app:destination="@id/camera" />
+        </fragment>
+        <fragment
+            android:id="@+id/addStory"
+            android:name="com.wibisa.dicodingstoryapp.ui.addstory.AddStoryFragment"
+            android:label="fragment_add_story"
+            tools:layout="@layout/fragment_add_story">
+            <action
+                android:id="@+id/action_addStory_to_cameraPermission"
+                app:destination="@id/cameraPermission" />
+        </fragment>
+    </navigation>
 </navigation>

@@ -16,4 +16,6 @@
     <string name="posting">Posting</string>
     <string name="description">Description</string>
     <string name="add_story">add story</string>
+    <string name="accept_camera_permission">You must accept camera permission to continue this process.</string>
+    <string name="loading">Loading...</string>
 </resources>

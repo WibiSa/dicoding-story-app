@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnAddStory.setOnClickListener {
-            mainNavController?.navigate(R.id.action_homeScreen_to_addStory)
+            mainNavController?.navigate(R.id.action_homeScreen_to_add_story_flow)
         }
 
         adapter = StoriesAdapter(StoryListener {
