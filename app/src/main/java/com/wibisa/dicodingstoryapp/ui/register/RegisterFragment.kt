@@ -13,14 +13,11 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.wibisa.dicodingstoryapp.R
 import com.wibisa.dicodingstoryapp.core.model.InputRegister
-import com.wibisa.dicodingstoryapp.core.util.ApiResult
-import com.wibisa.dicodingstoryapp.core.util.showToast
+import com.wibisa.dicodingstoryapp.core.util.*
 import com.wibisa.dicodingstoryapp.databinding.FragmentRegisterBinding
 import com.wibisa.dicodingstoryapp.viewmodel.RegisterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
-// TODO: Membuat Custom View berupa EditText pada halaman login dan register
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -42,22 +39,36 @@ class RegisterFragment : Fragment() {
 
         observeRegisterUiState()
 
-        binding.btnBack.setOnClickListener { }
+        binding.btnBack.setOnClickListener {
+            authNavController?.popBackStack()
+        }
 
         binding.btnRegister.setOnClickListener {
-            // TODO: input validation here!
+            hideKeyboard()
             register()
         }
     }
 
     private fun register() {
-        val name = binding.tfName.text.toString()
-        val email = binding.tfEmail.text.toString()
-        val password = binding.tfPassword.text.toString()
-
+        val name = binding.edName.text.toString()
+        val email = binding.edEmail.text.toString()
+        val password = binding.edPassword.text.toString()
         val inputRegister = InputRegister(name, email, password)
 
-        viewModel.register(inputRegister)
+        when {
+            email.isEmpty() or password.isEmpty() or name.isEmpty() -> {
+                binding.registerContainer.showShortSnackBar(getString(R.string.validation_empty))
+            }
+            !email.matches(emailPattern) -> {
+                binding.registerContainer.showShortSnackBar(getString(R.string.validation_invalid_email))
+            }
+            password.length <= 5 -> {
+                binding.registerContainer.showShortSnackBar(getString(R.string.validation_password))
+            }
+            else -> {
+                viewModel.register(inputRegister)
+            }
+        }
     }
 
     private fun observeRegisterUiState() {
@@ -76,7 +87,7 @@ class RegisterFragment : Fragment() {
                         }
                         is ApiResult.Error -> {
                             binding.loadingIndicator.hide()
-                            requireContext().showToast(registerUi.message)
+                            binding.registerContainer.showShortSnackBar(registerUi.message)
                             viewModel.registerCompleted()
                         }
                         else -> {}

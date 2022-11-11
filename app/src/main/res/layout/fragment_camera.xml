@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white"
-        tools:ignore="ContentDescription" />
+        android:contentDescription="@string/close_button" />
 
     <ImageButton
         android:id="@+id/btn_camera_shutter"
@@ -37,6 +37,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="ContentDescription" />
+        android:contentDescription="@string/shutter_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,9 +15,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.wibisa.dicodingstoryapp.R
 import com.wibisa.dicodingstoryapp.adapter.StoriesAdapter
 import com.wibisa.dicodingstoryapp.adapter.StoryListener
+import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
 import com.wibisa.dicodingstoryapp.core.model.UserPreferences
-import com.wibisa.dicodingstoryapp.core.util.ApiResult
-import com.wibisa.dicodingstoryapp.core.util.showToast
+import com.wibisa.dicodingstoryapp.core.util.*
 import com.wibisa.dicodingstoryapp.databinding.FragmentHomeBinding
 import com.wibisa.dicodingstoryapp.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,8 +55,14 @@ class HomeFragment : Fragment() {
 
     private fun componentUiSetup() {
 
-        binding.btnLogout.setOnClickListener {
-            makeLogoutDialogAlert()
+        binding.appbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logout -> {
+                    makeLogoutDialogAlert()
+                    true
+                }
+                else -> false
+            }
         }
 
         binding.btnAddStory.setOnClickListener {
@@ -68,6 +74,10 @@ class HomeFragment : Fragment() {
             mainNavController?.navigate(action)
         })
         binding.rvStories.adapter = adapter
+
+        binding.btnReloadStory.setOnClickListener {
+            observeUserPreferencesForGetStories()
+        }
     }
 
     private fun observeUserPreferencesForGetStories() {
@@ -80,28 +90,41 @@ class HomeFragment : Fragment() {
         viewModel.getAllStories(userPreferences)
     }
 
-    // TODO: swipe to refresh!
-
     private fun observeStoriesUiState() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.storiesUiState.collect { ui ->
                     when (ui) {
                         is ApiResult.Success -> {
+                            binding.loadingIndicator.hide()
                             adapter.submitList(ui.data)
+                            emptyStateStoryCheck(ui.data)
                             viewModel.getAllStoriesCompleted()
                         }
                         is ApiResult.Loading -> {
-                            // TODO: loading!
+                            binding.loadingIndicator.show()
+                            binding.homeEmptyStateContainer.hide()
                         }
                         is ApiResult.Error -> {
-                            requireContext().showToast(ui.message)
+                            binding.loadingIndicator.hide()
+                            binding.homeContainer.showShortSnackBar(ui.message)
+                            binding.homeEmptyStateContainer.show()
                             viewModel.getAllStoriesCompleted()
                         }
                         else -> {}
                     }
                 }
             }
+        }
+    }
+
+    private fun emptyStateStoryCheck(stories: List<Story>) {
+        if (stories.isNotEmpty()) {
+            binding.rvStories.show()
+            binding.homeEmptyStateContainer.hide()
+        } else {
+            binding.rvStories.hide()
+            binding.homeEmptyStateContainer.show()
         }
     }
 
@@ -128,15 +151,17 @@ class HomeFragment : Fragment() {
                 viewModel.logoutUiState.collect { logoutUi ->
                     when (logoutUi) {
                         is ApiResult.Success -> {
+                            binding.loadingIndicator.hide()
                             baseNavController?.navigate(R.id.action_baseMainFlow_to_baseAuthentication)
                             requireContext().showToast(logoutUi.data)
                             viewModel.logoutCompleted()
                         }
                         is ApiResult.Loading -> {
-                            // TODO: loading!
+                            binding.loadingIndicator.show()
                         }
                         is ApiResult.Error -> {
-                            requireContext().showToast(logoutUi.message)
+                            binding.loadingIndicator.hide()
+                            binding.homeContainer.showShortSnackBar(logoutUi.message)
                             viewModel.logoutCompleted()
                         }
                         else -> {}

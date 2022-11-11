@@ -1,11 +1,15 @@
 package com.wibisa.dicodingstoryapp.core.util
 
+import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -15,12 +19,25 @@ fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     }
 }
 
+fun View.showShortSnackBar(message: String) {
+    Snackbar.make(this, message, Snackbar.LENGTH_SHORT).show()
+}
+
 fun View.show() {
     visibility = View.VISIBLE
 }
 
 fun View.hide() {
     visibility = View.GONE
+}
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
 fun TextInputEditText.isNotNullOrEmpty(errorString: String): Boolean {

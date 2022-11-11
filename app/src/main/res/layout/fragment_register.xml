@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/register_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.register.RegisterFragment">
@@ -20,7 +21,7 @@
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/tf_layout_password" />
+            app:layout_constraintTop_toBottomOf="@id/ed_password" />
 
         <ImageButton
             android:id="@+id/btn_back"
@@ -28,6 +29,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/back_button"
             android:scaleType="center"
             android:src="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
@@ -68,60 +70,47 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tf_layout_email"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/email"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/tf_layout_name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tf_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tf_layout_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/password"
-            app:endIconMode="password_toggle"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/tf_layout_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tf_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tf_layout_name"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.wibisa.dicodingstoryapp.ui.customview.ClearEditText
+            android:id="@+id/ed_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
             android:hint="@string/name"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:transitionName="name"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/lbl">
+            app:layout_constraintTop_toBottomOf="@id/lbl" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tf_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <com.wibisa.dicodingstoryapp.ui.customview.EmailEditText
+            android:id="@+id/ed_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:transitionName="email"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@id/ed_name" />
+
+        <com.wibisa.dicodingstoryapp.ui.customview.PasswordEditText
+            android:id="@+id/ed_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:transitionName="password"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@id/ed_email" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

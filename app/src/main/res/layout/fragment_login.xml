@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.login.LoginFragment">
@@ -18,7 +19,7 @@
             android:layout_marginTop="44dp"
             android:text="@string/login"
             android:textAllCaps="false"
-            app:layout_constraintTop_toBottomOf="@id/tf_layout_password" />
+            app:layout_constraintTop_toBottomOf="@id/ed_password" />
 
         <TextView
             android:id="@+id/tv_go_to_register"
@@ -53,38 +54,62 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tf_layout_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/password"
-            app:endIconMode="password_toggle"
-            app:layout_constraintTop_toBottomOf="@id/tf_layout_email">
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            android:id="@+id/tf_layout_password"-->
+        <!--            style="@style/Custom.App.TextInputLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:hint="@string/password"-->
+        <!--            app:endIconMode="password_toggle"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/tf_layout_email">-->
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tf_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <!--            <com.google.android.material.textfield.TextInputEditText-->
+        <!--                android:id="@+id/tf_password"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:inputType="textPassword" />-->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tf_layout_email"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            android:id="@+id/tf_layout_email"-->
+        <!--            style="@style/Custom.App.TextInputLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="44dp"-->
+        <!--            android:hint="@string/email"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/tv_welcome">-->
+
+        <!--            <com.google.android.material.textfield.TextInputEditText-->
+        <!--                android:id="@+id/tf_email"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:inputType="text" />-->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <com.wibisa.dicodingstoryapp.ui.customview.EmailEditText
+            android:id="@+id/ed_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
             android:hint="@string/email"
-            app:layout_constraintTop_toBottomOf="@id/tv_welcome">
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:transitionName="email"
+            app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tf_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <com.wibisa.dicodingstoryapp.ui.customview.PasswordEditText
+            android:id="@+id/ed_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:transitionName="password"
+            app:layout_constraintTop_toBottomOf="@id/ed_email" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

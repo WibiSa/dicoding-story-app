@@ -15,14 +15,14 @@ import com.wibisa.dicodingstoryapp.R
 import com.wibisa.dicodingstoryapp.core.model.InputLogin
 import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.ApiResult
-import com.wibisa.dicodingstoryapp.core.util.showToast
+import com.wibisa.dicodingstoryapp.core.util.emailPattern
+import com.wibisa.dicodingstoryapp.core.util.hideKeyboard
+import com.wibisa.dicodingstoryapp.core.util.showShortSnackBar
 import com.wibisa.dicodingstoryapp.databinding.FragmentLoginBinding
 import com.wibisa.dicodingstoryapp.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-// TODO: Membuat Custom View berupa EditText pada halaman login dan register
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
         observeLoginUiState()
 
         binding.btnLogin.setOnClickListener {
-            // TODO: input validation here!
+            hideKeyboard()
             login()
         }
 
@@ -56,12 +56,24 @@ class LoginFragment : Fragment() {
     }
 
     private fun login() {
-        val email = binding.tfEmail.text.toString()
-        val password = binding.tfPassword.text.toString()
-
+        val email = binding.edEmail.text.toString()
+        val password = binding.edPassword.text.toString()
         val inputLogin = InputLogin(email, password)
 
-        viewModel.login(inputLogin)
+        when {
+            email.isEmpty() or password.isEmpty() -> {
+                binding.loginContainer.showShortSnackBar(getString(R.string.validation_empty))
+            }
+            !email.matches(emailPattern) -> {
+                binding.loginContainer.showShortSnackBar(getString(R.string.validation_invalid_email))
+            }
+            password.length <= 5 -> {
+                binding.loginContainer.showShortSnackBar(getString(R.string.validation_password))
+            }
+            else -> {
+                viewModel.login(inputLogin)
+            }
+        }
     }
 
     private fun observeLoginUiState() {
@@ -86,7 +98,7 @@ class LoginFragment : Fragment() {
                         }
                         is ApiResult.Error -> {
                             binding.loadingIndicator.hide()
-                            requireContext().showToast(loginUi.message)
+                            binding.loginContainer.showShortSnackBar(loginUi.message)
                             viewModel.loginCompleted()
                         }
                         else -> {}

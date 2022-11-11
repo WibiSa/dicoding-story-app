@@ -90,13 +90,14 @@ class AddStoryFragment : Fragment() {
         }
 
         binding.btnUpload.setOnClickListener {
-            val isValid = binding.tfDescription.isNotNullOrEmpty("Required.")
+            val isValid =
+                binding.tfDescription.isNotNullOrEmpty(getString(R.string.validation_empty))
 
             if (isValid) {
                 if (viewModel.photoFile.value != null)
                     observeUserPreferencesForAddStory()
                 else
-                    requireContext().showToast("Image file required.")
+                    binding.addStoryContainer.showShortSnackBar(getString(R.string.validation_image_required))
             }
         }
     }
@@ -154,7 +155,7 @@ class AddStoryFragment : Fragment() {
                         is ApiResult.Error -> {
                             loadingDialog.dismissLoadingDialog()
 
-                            requireContext().showToast(ui.message)
+                            binding.addStoryContainer.showShortSnackBar(ui.message)
 
                             viewModel.addStoryCompleted()
                         }

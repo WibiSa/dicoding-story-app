@@ -30,6 +30,10 @@ class StoryDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.appbar.setNavigationOnClickListener {
+            mainNavController?.popBackStack()
+        }
+
         bindStoryToView(view)
     }
 

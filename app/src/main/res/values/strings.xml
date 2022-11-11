@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Dicoding Story App</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
@@ -17,5 +15,15 @@
     <string name="description">Description</string>
     <string name="add_story">add story</string>
     <string name="accept_camera_permission">You must accept camera permission to continue this process.</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
+    <string name="back_button">Back button</string>
+    <string name="story_photo">Story photo</string>
+    <string name="close_button">Close button</string>
+    <string name="shutter_button">Shutter button</string>
+    <string name="reload">Reload</string>
+    <string name="empty_story">Empty story…</string>
+    <string name="validation_invalid_email">Email format is invalid</string>
+    <string name="validation_password">Password must contain at least 6 characters</string>
+    <string name="validation_empty">Field must be filled</string>
+    <string name="validation_image_required">Image file required</string>
 </resources>
