@@ -105,7 +105,10 @@ class AddStoryFragment : Fragment() {
     private fun observePhoto(view: View) {
         viewModel.photoFile.observe(viewLifecycleOwner) { photo ->
             if (photo != null) {
+                binding.imgPlaceholder.hide()
                 Glide.with(view).load(photo).into(binding.imgPreview)
+            }else{
+                binding.imgPlaceholder.show()
             }
         }
     }
