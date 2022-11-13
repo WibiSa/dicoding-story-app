@@ -19,6 +19,7 @@ import com.wibisa.dicodingstoryapp.core.util.emailPattern
 import com.wibisa.dicodingstoryapp.core.util.hideKeyboard
 import com.wibisa.dicodingstoryapp.core.util.showShortSnackBar
 import com.wibisa.dicodingstoryapp.databinding.FragmentLoginBinding
+import com.wibisa.dicodingstoryapp.ui.customview.LoadingDialog
 import com.wibisa.dicodingstoryapp.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
+    private lateinit var loadingDialog: LoadingDialog
     private val viewModel: LoginViewModel by viewModels()
     private val authNavController: NavController? by lazy { view?.findNavController() }
     private val baseNavController: NavController? by lazy { activity?.findNavController(R.id.base_nav_host) }
@@ -42,6 +44,8 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingDialog = LoadingDialog(requireActivity())
 
         observeLoginUiState()
 
@@ -82,7 +86,7 @@ class LoginFragment : Fragment() {
                 viewModel.loginUiState.collect { loginUi ->
                     when (loginUi) {
                         is ApiResult.Success -> {
-                            binding.loadingIndicator.hide()
+                            loadingDialog.dismissLoadingDialog()
                             val userPreferences = UserPreferences(
                                 userId = loginUi.data.userId,
                                 name = loginUi.data.name,
@@ -94,10 +98,10 @@ class LoginFragment : Fragment() {
                             viewModel.loginCompleted()
                         }
                         is ApiResult.Loading -> {
-                            binding.loadingIndicator.show()
+                            loadingDialog.startLoadingDialog()
                         }
                         is ApiResult.Error -> {
-                            binding.loadingIndicator.hide()
+                            loadingDialog.dismissLoadingDialog()
                             binding.loginContainer.showShortSnackBar(loginUi.message)
                             viewModel.loginCompleted()
                         }
