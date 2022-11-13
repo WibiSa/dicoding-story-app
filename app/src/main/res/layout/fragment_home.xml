@@ -18,7 +18,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="Dicoding Story"
+            app:title="@string/app_name"
             app:menu="@menu/home_top_app_bar"
             app:titleTextAppearance="@style/TextAppearance.HomeAppBar"/>
     </com.google.android.material.appbar.AppBarLayout>

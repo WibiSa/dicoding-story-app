@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dicoding Story</string>
+    <string name="password">Kata Sandi</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="login">Masuk</string>
+    <string name="welcome_back">Selamat datang kembali!</string>
+    <string name="register_here">Belum punya akun? Daftar disini</string>
+    <string name="name">Nama</string>
+    <string name="register">Daftar</string>
+    <string name="create_account">Buat akun</string>
+    <string name="logout">Keluar</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="posting">Posting</string>
+    <string name="description">Deskripsi</string>
+    <string name="add_story">tambah cerita</string>
+    <string name="accept_camera_permission">Anda harus menerima izin kamera untuk melanjutkan proses ini.</string>
+    <string name="loading">Memuat…</string>
+    <string name="back_button">Tombol kembali</string>
+    <string name="story_photo">Foto cerita</string>
+    <string name="close_button">Tombol tutup</string>
+    <string name="shutter_button">Tombol rana</string>
+    <string name="reload">Muat ulang</string>
+    <string name="empty_story">Cerita kosong…</string>
+    <string name="validation_invalid_email">Format email tidak valid</string>
+    <string name="validation_password">Kata sandi harus mengandung setidaknya 6 karakter</string>
+    <string name="validation_empty">Kolom harus diisi</string>
+    <string name="validation_image_required">File gambar diperlukan</string>
+    <string name="new_story">Cerita baru</string>
+    <string name="detail">Detail cerita</string>
+    <string name="attention">Perhatian</string>
+    <string name="sure_wanna_logout">Keluar dari Aplikasi?</string>
+    <string name="yes">Ya</string>
+    <string name="cancel">Batal</string>
+</resources>

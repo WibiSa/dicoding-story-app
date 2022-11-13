@@ -130,10 +130,10 @@ class HomeFragment : Fragment() {
 
     private fun makeLogoutDialogAlert() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Attention")
-            .setMessage("Logout form App?")
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-            .setPositiveButton("Yes") { dialog, _ ->
+            .setTitle(getString(R.string.attention))
+            .setMessage(getString(R.string.sure_wanna_logout))
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 logout()
                 dialog.dismiss()
             }
