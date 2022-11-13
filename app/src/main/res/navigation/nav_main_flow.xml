@@ -51,4 +51,13 @@
                 app:destination="@id/cameraPermission" />
         </fragment>
     </navigation>
+    <fragment
+        android:id="@+id/explore"
+        android:name="com.wibisa.dicodingstoryapp.ui.explore.ExploreFragment"
+        android:label="fragment_explore"
+        tools:layout="@layout/fragment_explore" >
+        <action
+            android:id="@+id/action_explore_to_storyDetails"
+            app:destination="@id/storyDetails" />
+    </fragment>
 </navigation>

@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ExploreViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val storyRepository: StoryRepository
 ) : ViewModel() {
@@ -30,9 +30,6 @@ class HomeViewModel @Inject constructor(
     private val _storiesUiState = MutableStateFlow<ApiResult<List<Story>>>(ApiResult.Empty)
     val storiesUiState: StateFlow<ApiResult<List<Story>>> = _storiesUiState.asStateFlow()
 
-    private val _logoutUiState = MutableStateFlow<ApiResult<String>>(ApiResult.Empty)
-    val logoutUiState: StateFlow<ApiResult<String>> = _logoutUiState.asStateFlow()
-
     init {
         viewModelScope.launch {
             _userPreferences.value = userRepository.fetchUserPreferences()
@@ -42,24 +39,12 @@ class HomeViewModel @Inject constructor(
     fun getAllStories(userPreferences: UserPreferences) {
         viewModelScope.launch(Dispatchers.IO) {
             _storiesUiState.value = ApiResult.Loading
-            val response = storyRepository.getAllStories(userPreferences, 0)
+            val response = storyRepository.getAllStories(userPreferences, 1)
             _storiesUiState.value = response
         }
     }
 
     fun getAllStoriesCompleted() {
         _storiesUiState.value = ApiResult.Empty
-    }
-
-    fun logout() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _logoutUiState.value = ApiResult.Loading
-            val response = userRepository.logout()
-            _logoutUiState.value = response
-        }
-    }
-
-    fun logoutCompleted() {
-        _logoutUiState.value = ApiResult.Empty
     }
 }

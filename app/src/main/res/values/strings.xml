@@ -32,4 +32,6 @@
     <string name="sure_wanna_logout">Logout from App?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="home" translatable="false">Home</string>
+    <string name="explore" translatable="false">Explore</string>
 </resources>

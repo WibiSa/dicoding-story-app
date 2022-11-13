@@ -16,6 +16,7 @@
         <item name="borderlessButtonStyle">@style/Widget.App.Button.TextButton</item>
         <item name="materialButtonOutlinedStyle">@style/Widget.App.Button.OutlinedButton</item>
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
     </style>
 
     <!-- progress indicators -->
@@ -66,9 +67,9 @@
         <item name="cornerSize">28dp</item>
     </style>
 
+    <!-- text field -->
     <style name="Custom.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInputLayout</item>
-<!--        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>-->
         <item name="hintTextColor">?attr/colorOnSurface</item>
     </style>
 
@@ -77,10 +78,21 @@
         <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
     </style>
 
+    <!-- bottom nav bar -->
+    <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+
+    <!-- text -->
     <style name="TextAppearance.HomeAppBar" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/arizonia</item>
         <item name="android:fontFamily">@font/arizonia</item>
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 </resources>

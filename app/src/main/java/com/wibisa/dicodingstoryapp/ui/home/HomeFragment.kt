@@ -57,16 +57,16 @@ class HomeFragment : Fragment() {
 
         binding.appbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.add_story -> {
+                    mainNavController?.navigate(R.id.action_homeScreen_to_add_story_flow)
+                    true
+                }
                 R.id.logout -> {
                     makeLogoutDialogAlert()
                     true
                 }
                 else -> false
             }
-        }
-
-        binding.btnAddStory.setOnClickListener {
-            mainNavController?.navigate(R.id.action_homeScreen_to_add_story_flow)
         }
 
         adapter = StoriesAdapter(StoryListener {

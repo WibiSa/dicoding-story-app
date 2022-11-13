@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.wibisa.dicodingstoryapp.R
+import com.wibisa.dicodingstoryapp.core.util.loadImage
 import com.wibisa.dicodingstoryapp.databinding.FragmentStoryDetailsBinding
 
 class StoryDetailsFragment : Fragment() {
@@ -34,15 +33,13 @@ class StoryDetailsFragment : Fragment() {
             mainNavController?.popBackStack()
         }
 
-        bindStoryToView(view)
+        bindStoryToView()
     }
 
-    private fun bindStoryToView(view: View) {
+    private fun bindStoryToView() {
 
         binding.apply {
-            Glide.with(view).load(args.story.photoUrl).placeholder(R.color.gray).centerCrop()
-                .into(imgPhoto)
-
+            imgPhoto.loadImage(args.story.photoUrl)
             tvName.text = args.story.name
             tvDescription.text = args.story.description
         }

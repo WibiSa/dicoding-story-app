@@ -16,10 +16,13 @@ class StoryRepository @Inject constructor(
     private val api: StoryApi
 ) {
 
-    suspend fun getAllStories(userPreferences: UserPreferences): ApiResult<List<Story>> {
+    suspend fun getAllStories(
+        userPreferences: UserPreferences,
+        needLocation: Int
+    ): ApiResult<List<Story>> {
         return try {
             val token = StringTransform.tokenFormat(userPreferences.token)
-            val response = api.getAllStories(token = token)
+            val response = api.getAllStories(token = token, location = needLocation)
 
             if (!response.error) {
                 ApiResult.Success(response.listStory)
