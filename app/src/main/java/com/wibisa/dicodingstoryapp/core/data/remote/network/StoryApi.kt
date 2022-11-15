@@ -27,7 +27,14 @@ interface StoryApi {
     @GET("stories")
     suspend fun getAllStories(
         @Header("Authorization") token: String,
-        @Query("location") location: Int = 0
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): AllStoriesNetwork
+
+    @GET("stories")
+    suspend fun getAllStoriesWithLocation(
+        @Header("Authorization") token: String,
+        @Query("location") location: Int = 1
     ): AllStoriesNetwork
 
     @Multipart

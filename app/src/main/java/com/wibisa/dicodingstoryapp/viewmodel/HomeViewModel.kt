@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
 import com.wibisa.dicodingstoryapp.core.data.repository.StoryRepository
 import com.wibisa.dicodingstoryapp.core.data.repository.UserRepository
@@ -11,6 +13,7 @@ import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,9 +30,6 @@ class HomeViewModel @Inject constructor(
     val userPreferences: LiveData<UserPreferences>
         get() = _userPreferences
 
-    private val _storiesUiState = MutableStateFlow<ApiResult<List<Story>>>(ApiResult.Empty)
-    val storiesUiState: StateFlow<ApiResult<List<Story>>> = _storiesUiState.asStateFlow()
-
     private val _logoutUiState = MutableStateFlow<ApiResult<String>>(ApiResult.Empty)
     val logoutUiState: StateFlow<ApiResult<String>> = _logoutUiState.asStateFlow()
 
@@ -39,16 +39,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getAllStories(userPreferences: UserPreferences) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _storiesUiState.value = ApiResult.Loading
-            val response = storyRepository.getAllStories(userPreferences, 0)
-            _storiesUiState.value = response
-        }
-    }
-
-    fun getAllStoriesCompleted() {
-        _storiesUiState.value = ApiResult.Empty
+    fun getAllStories(userPreferences: UserPreferences): Flow<PagingData<Story>> {
+        return storyRepository.getAllStoriesWithPaging(userPreferences).cachedIn(viewModelScope)
     }
 
     fun logout() {

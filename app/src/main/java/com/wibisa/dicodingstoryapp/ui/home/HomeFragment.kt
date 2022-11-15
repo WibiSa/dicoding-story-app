@@ -11,16 +11,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.wibisa.dicodingstoryapp.R
 import com.wibisa.dicodingstoryapp.adapter.StoriesAdapter
 import com.wibisa.dicodingstoryapp.adapter.StoryListener
-import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
-import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.*
 import com.wibisa.dicodingstoryapp.databinding.FragmentHomeBinding
 import com.wibisa.dicodingstoryapp.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -44,9 +44,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeUserPreferencesForGetStories()
-
-        observeStoriesUiState()
+        collectStoriesUiState()
 
         observeLogoutUiState()
 
@@ -75,56 +73,46 @@ class HomeFragment : Fragment() {
         })
         binding.rvStories.adapter = adapter
 
+        pagingLoadState()
+
         binding.btnReloadStory.setOnClickListener {
-            observeUserPreferencesForGetStories()
+            collectStoriesUiState()
         }
     }
 
-    private fun observeUserPreferencesForGetStories() {
-        viewModel.userPreferences.observe(viewLifecycleOwner) {
-            getStories(it)
-        }
-    }
-
-    private fun getStories(userPreferences: UserPreferences) {
-        viewModel.getAllStories(userPreferences)
-    }
-
-    private fun observeStoriesUiState() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.storiesUiState.collect { ui ->
-                    when (ui) {
-                        is ApiResult.Success -> {
-                            binding.loadingIndicator.hide()
-                            adapter.submitList(ui.data)
-                            emptyStateStoryCheck(ui.data)
-                            viewModel.getAllStoriesCompleted()
-                        }
-                        is ApiResult.Loading -> {
-                            binding.loadingIndicator.show()
-                            binding.homeEmptyStateContainer.hide()
-                        }
-                        is ApiResult.Error -> {
-                            binding.loadingIndicator.hide()
-                            binding.homeContainer.showShortSnackBar(ui.message)
-                            binding.homeEmptyStateContainer.show()
-                            viewModel.getAllStoriesCompleted()
-                        }
-                        else -> {}
+    private fun collectStoriesUiState() {
+        viewModel.userPreferences.observe(viewLifecycleOwner) { userPreferences ->
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.getAllStories(userPreferences).collectLatest { stories ->
+                        adapter.submitData(stories)
                     }
                 }
             }
         }
     }
 
-    private fun emptyStateStoryCheck(stories: List<Story>) {
-        if (stories.isNotEmpty()) {
-            binding.rvStories.show()
-            binding.homeEmptyStateContainer.hide()
-        } else {
-            binding.rvStories.hide()
-            binding.homeEmptyStateContainer.show()
+    private fun pagingLoadState() {
+        adapter.addLoadStateListener { loadState ->
+
+            when (loadState.refresh) {
+                is LoadState.NotLoading -> {
+                    binding.loadingIndicator.hide()
+                    binding.rvStories.show()
+                    binding.homeEmptyStateContainer.hide()
+                }
+                is LoadState.Loading -> {
+                    binding.loadingIndicator.show()
+                    binding.homeEmptyStateContainer.hide()
+                }
+                is LoadState.Error -> {
+                    binding.loadingIndicator.hide()
+                    val errorState = loadState.refresh as LoadState.Error
+                    binding.homeContainer.showShortSnackBar(errorState.error.message.toString())
+                    binding.rvStories.hide()
+                    binding.homeEmptyStateContainer.show()
+                }
+            }
         }
     }
 

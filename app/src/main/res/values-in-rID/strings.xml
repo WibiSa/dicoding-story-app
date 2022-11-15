@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Dicoding Story</string>
     <string name="password">Kata Sandi</string>
-    <string name="email" translatable="false">Email</string>
     <string name="login">Masuk</string>
     <string name="welcome_back">Selamat datang kembali!</string>
     <string name="register_here">Belum punya akun? Daftar disini</string>
@@ -33,4 +31,6 @@
     <string name="sure_wanna_logout">Keluar dari Aplikasi?</string>
     <string name="yes">Ya</string>
     <string name="cancel">Batal</string>
+    <string name="home">Beranda</string>
+    <string name="explore">Jelajahi</string>
 </resources>

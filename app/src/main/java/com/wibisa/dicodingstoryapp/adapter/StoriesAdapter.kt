@@ -2,15 +2,15 @@ package com.wibisa.dicodingstoryapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
 import com.wibisa.dicodingstoryapp.core.util.loadImage
 import com.wibisa.dicodingstoryapp.databinding.ItemStoryBinding
 
 class StoriesAdapter(private val clickListener: StoryListener) :
-    ListAdapter<Story, StoriesAdapter.StoriesAdapterViewHolder>(COMPARATOR) {
+    PagingDataAdapter<Story, StoriesAdapter.StoriesAdapterViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoriesAdapterViewHolder {
         val itemStoryBinding =

@@ -39,7 +39,7 @@ class ExploreViewModel @Inject constructor(
     fun getAllStories(userPreferences: UserPreferences) {
         viewModelScope.launch(Dispatchers.IO) {
             _storiesUiState.value = ApiResult.Loading
-            val response = storyRepository.getAllStories(userPreferences, 1)
+            val response = storyRepository.getAllStoriesWithLocation(userPreferences)
             _storiesUiState.value = response
         }
     }

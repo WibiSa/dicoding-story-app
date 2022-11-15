@@ -1,10 +1,15 @@
 package com.wibisa.dicodingstoryapp.core.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.wibisa.dicodingstoryapp.core.data.StoryPagingSource
 import com.wibisa.dicodingstoryapp.core.data.remote.network.StoryApi
 import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
 import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.ApiResult
 import com.wibisa.dicodingstoryapp.core.util.StringTransform
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -16,13 +21,26 @@ class StoryRepository @Inject constructor(
     private val api: StoryApi
 ) {
 
-    suspend fun getAllStories(
-        userPreferences: UserPreferences,
-        needLocation: Int
+    fun getAllStoriesWithPaging(userPreferences: UserPreferences): Flow<PagingData<Story>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5
+            ),
+            pagingSourceFactory = {
+                StoryPagingSource(
+                    api = api,
+                    userPreferences = userPreferences
+                )
+            }
+        ).flow
+    }
+
+    suspend fun getAllStoriesWithLocation(
+        userPreferences: UserPreferences
     ): ApiResult<List<Story>> {
         return try {
             val token = StringTransform.tokenFormat(userPreferences.token)
-            val response = api.getAllStories(token = token, location = needLocation)
+            val response = api.getAllStoriesWithLocation(token = token)
 
             if (!response.error) {
                 ApiResult.Success(response.listStory)
