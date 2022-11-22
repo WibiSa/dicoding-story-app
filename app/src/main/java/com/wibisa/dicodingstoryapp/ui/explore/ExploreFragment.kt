@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -67,8 +65,6 @@ class ExploreFragment : Fragment(), OnMapReadyCallback, GoogleMap.InfoWindowAdap
 
         observeUserPreferencesForGetStories()
 
-        observeStoriesUiState()
-
         setMapStyle()
 
         map.setInfoWindowAdapter(this)
@@ -113,35 +109,29 @@ class ExploreFragment : Fragment(), OnMapReadyCallback, GoogleMap.InfoWindowAdap
     }
 
     private fun observeUserPreferencesForGetStories() {
-        viewModel.userPreferences.observe(viewLifecycleOwner) {
-            getStories(it)
+        lifecycleScope.launch {
+            viewModel.getUserPreferences().observe(viewLifecycleOwner) {
+                getStories(it)
+            }
         }
     }
 
     private fun getStories(userPreferences: UserPreferences) {
-        viewModel.getAllStories(userPreferences)
-    }
-
-    private fun observeStoriesUiState() {
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.storiesUiState.collect { ui ->
-                    when (ui) {
-                        is ApiResult.Success -> {
-                            binding.loadingIndicator.hide()
-                            addManyStoryMarkerOnMap(ui.data)
-                            viewModel.getAllStoriesCompleted()
-                        }
-                        is ApiResult.Loading -> {
-                            binding.loadingIndicator.show()
-                        }
-                        is ApiResult.Error -> {
-                            binding.loadingIndicator.hide()
-                            binding.exploreContainer.showShortSnackBar(ui.message)
-                            viewModel.getAllStoriesCompleted()
-                        }
-                        else -> {}
+            viewModel.getStories(userPreferences).observe(viewLifecycleOwner) { ui ->
+                when (ui) {
+                    is ApiResult.Success -> {
+                        binding.loadingIndicator.hide()
+                        addManyStoryMarkerOnMap(ui.data)
                     }
+                    is ApiResult.Loading -> {
+                        binding.loadingIndicator.show()
+                    }
+                    is ApiResult.Error -> {
+                        binding.loadingIndicator.hide()
+                        binding.exploreContainer.showShortSnackBar(ui.message)
+                    }
+                    else -> {}
                 }
             }
         }

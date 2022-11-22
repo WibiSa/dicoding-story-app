@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.wibisa.dicodingstoryapp.R
@@ -47,11 +45,9 @@ class LoginFragment : Fragment() {
 
         loadingDialog = LoadingDialog(requireActivity())
 
-        observeLoginUiState()
-
         binding.btnLogin.setOnClickListener {
             hideKeyboard()
-            login()
+            doLogin()
         }
 
         binding.tvGoToRegister.setOnClickListener {
@@ -59,7 +55,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun login() {
+    private fun doLogin() {
         val email = binding.edEmail.text.toString()
         val password = binding.edPassword.text.toString()
         val inputLogin = InputLogin(email, password)
@@ -75,38 +71,36 @@ class LoginFragment : Fragment() {
                 binding.loginContainer.showShortSnackBar(getString(R.string.validation_password))
             }
             else -> {
-                viewModel.login(inputLogin)
+                observeLogin(inputLogin)
             }
         }
     }
 
-    private fun observeLoginUiState() {
+    private fun observeLogin(inputLogin: InputLogin) {
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.loginUiState.collect { loginUi ->
-                    when (loginUi) {
-                        is ApiResult.Success -> {
-                            loadingDialog.dismissLoadingDialog()
-                            val userPreferences = UserPreferences(
-                                userId = loginUi.data.userId,
-                                name = loginUi.data.name,
-                                token = loginUi.data.token
-                            )
+            viewModel.login(inputLogin).observe(viewLifecycleOwner) { loginUi ->
+                when (loginUi) {
+                    is ApiResult.Success -> {
+                        loadingDialog.dismissLoadingDialog()
+                        val userPreferences = UserPreferences(
+                            userId = loginUi.data.userId,
+                            name = loginUi.data.name,
+                            token = loginUi.data.token
+                        )
+                        lifecycleScope.launch {
                             viewModel.saveUserPreferences(userPreferences)
-                            delay(800)
+                            delay(1100)
                             baseNavController?.navigate(R.id.action_baseAuthentication_to_baseMainFlow)
-                            viewModel.loginCompleted()
                         }
-                        is ApiResult.Loading -> {
-                            loadingDialog.startLoadingDialog()
-                        }
-                        is ApiResult.Error -> {
-                            loadingDialog.dismissLoadingDialog()
-                            binding.loginContainer.showShortSnackBar(loginUi.message)
-                            viewModel.loginCompleted()
-                        }
-                        else -> {}
                     }
+                    is ApiResult.Loading -> {
+                        loadingDialog.startLoadingDialog()
+                    }
+                    is ApiResult.Error -> {
+                        loadingDialog.dismissLoadingDialog()
+                        binding.loginContainer.showShortSnackBar(loginUi.message)
+                    }
+                    else -> {}
                 }
             }
         }

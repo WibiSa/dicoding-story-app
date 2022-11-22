@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.wibisa.dicodingstoryapp.R
 import com.wibisa.dicodingstoryapp.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,8 +32,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeUserPreferencesForCheckLoginState() {
-        viewModel.userPreferences.observe(this) {
-            checkLoginState(it.token)
+        lifecycleScope.launch {
+            viewModel.getUserPreferences().observe(this@MainActivity) {
+                checkLoginState(it.token)
+            }
         }
     }
 

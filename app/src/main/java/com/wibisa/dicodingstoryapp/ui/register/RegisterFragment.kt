@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.wibisa.dicodingstoryapp.R
@@ -37,19 +35,17 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeRegisterUiState()
-
         binding.btnBack.setOnClickListener {
             authNavController?.popBackStack()
         }
 
         binding.btnRegister.setOnClickListener {
             hideKeyboard()
-            register()
+            doRegister()
         }
     }
 
-    private fun register() {
+    private fun doRegister() {
         val name = binding.edName.text.toString()
         val email = binding.edEmail.text.toString()
         val password = binding.edPassword.text.toString()
@@ -66,21 +62,20 @@ class RegisterFragment : Fragment() {
                 binding.registerContainer.showShortSnackBar(getString(R.string.validation_password))
             }
             else -> {
-                viewModel.register(inputRegister)
+                observeRegister(inputRegister)
             }
         }
     }
 
-    private fun observeRegisterUiState() {
+    private fun observeRegister(inputRegister: InputRegister) {
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.registerUiState.collect { registerUi ->
+            viewModel.register(inputRegister)
+                .observe(viewLifecycleOwner) { registerUi ->
                     when (registerUi) {
                         is ApiResult.Success -> {
                             binding.loadingIndicator.hide()
                             requireContext().showToast(registerUi.data)
                             authNavController?.popBackStack(R.id.login, false)
-                            viewModel.registerCompleted()
                         }
                         is ApiResult.Loading -> {
                             binding.loadingIndicator.show()
@@ -88,12 +83,10 @@ class RegisterFragment : Fragment() {
                         is ApiResult.Error -> {
                             binding.loadingIndicator.hide()
                             binding.registerContainer.showShortSnackBar(registerUi.message)
-                            viewModel.registerCompleted()
                         }
                         else -> {}
                     }
                 }
-            }
         }
     }
 }

@@ -12,9 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
@@ -39,7 +37,7 @@ class AddStoryFragment : Fragment() {
                 val selectedImage: Uri = result.data?.data as Uri
                 val myFile = uriToFile(selectedImage, requireContext())
 
-                viewModel.saveTemporarilyPhotoFile(myFile)
+                viewModel.photoFile.value = myFile
             }
         }
 
@@ -47,7 +45,6 @@ class AddStoryFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                viewModel.clearPhotoInCache()
                 mainFlowNavController?.popBackStack()
             }
         })
@@ -70,14 +67,11 @@ class AddStoryFragment : Fragment() {
         componentUiSetup()
 
         observePhoto(view)
-
-        observeAddStoryUiState()
     }
 
     private fun componentUiSetup() {
 
         binding.appbar.setNavigationOnClickListener {
-            viewModel.clearPhotoInCache()
             mainFlowNavController?.popBackStack()
         }
 
@@ -107,7 +101,7 @@ class AddStoryFragment : Fragment() {
             if (photo != null) {
                 binding.imgPlaceholder.hide()
                 Glide.with(view).load(photo).into(binding.imgPreview)
-            }else{
+            } else {
                 binding.imgPlaceholder.show()
             }
         }
@@ -122,8 +116,10 @@ class AddStoryFragment : Fragment() {
     }
 
     private fun observeUserPreferencesForAddStory() {
-        viewModel.userPreferences.observe(viewLifecycleOwner) {
-            addStory(it)
+        lifecycleScope.launch {
+            viewModel.getUserPreferences().observe(viewLifecycleOwner) {
+                addStory(it)
+            }
         }
     }
 
@@ -133,24 +129,16 @@ class AddStoryFragment : Fragment() {
 
         val reducePhotoFile = reduceFileImage(photoFile)
 
-        viewModel.addStory(userPreferences, storyDesc, reducePhotoFile)
-    }
-
-    private fun observeAddStoryUiState() {
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.addStoryUiState.collect { ui ->
+            viewModel.addStory(userPreferences, storyDesc, reducePhotoFile)
+                .observe(viewLifecycleOwner) { ui ->
                     when (ui) {
                         is ApiResult.Success -> {
                             loadingDialog.dismissLoadingDialog()
 
-                            viewModel.clearPhotoInCache()
-
                             mainFlowNavController?.popBackStack()
 
                             requireContext().showToast(ui.data)
-
-                            viewModel.addStoryCompleted()
                         }
                         is ApiResult.Loading -> {
                             loadingDialog.startLoadingDialog()
@@ -159,13 +147,10 @@ class AddStoryFragment : Fragment() {
                             loadingDialog.dismissLoadingDialog()
 
                             binding.addStoryContainer.showShortSnackBar(ui.message)
-
-                            viewModel.addStoryCompleted()
                         }
                         else -> {}
                     }
                 }
-            }
         }
     }
 }

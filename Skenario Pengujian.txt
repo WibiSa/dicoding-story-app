@@ -1,0 +1,52 @@
+=== Skenario Pengujian ===
+
+Unit Testing
+
+RegisterViewModel
+ * a. Ketika berhasil register
+ * - mengembalikan status success
+ * b. Ketika gagal register
+ * - mengembalikan status error
+
+LoginViewModel
+ * a. Ketika berhasil login
+ * - mengembalikan status success
+ * b. Ketika gagal login
+ * - mengembalikan status error
+ * c. Menyimpan token pada data store
+ * - berhasil menyimpan token
+
+MainViewModel
+ * a. Mengambil data user preferences dari data store
+ * - berhasil mengambil data
+ * - data null
+
+HomeViewModel
+ * a. Mengambil data user preferences dari data store
+ * - berhasil mengambil data
+ * - data null
+ * b. Ketika mengambil data stories
+ * - data tidak null
+ * - jumlah data sesuai
+ * c. Ketika berhasil logout
+ * - mengembalikan status success
+ * d. Ketika gagal logout
+ * - mengembalikan status error
+
+ExploreViewModel
+ * a. Mengambil data user preferences dari data store
+ * - berhasil mengambil data
+ * - data null
+ * b. Ketika berhasil mengambil data stories
+ * - mengembalikan status success
+ * c. Ketika gagal mengambil data stories
+ * - mengembalikan status error
+
+AddStoryViewModel
+ * a. Mengambil data user preferences dari data store
+ * - berhasil mengambil data
+ * - data null
+ * b. Ketika berhasil tambah story
+ * - mengembalikan status success
+ * c. Ketika gagal tambah story
+ * - mengembalikan status error

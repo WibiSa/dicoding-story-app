@@ -132,8 +132,7 @@ class CameraFragment : Fragment() {
                     val savedUri = p0.savedUri ?: Uri.fromFile(photoFile)
                     Log.d(TAG, "photo capture succeeded: ${savedUri.path}")
                     savedUri.path?.let {
-//                        viewModel.saveTemporarilyPhotoTake(it)
-                        viewModel.saveTemporarilyPhotoFile(photoFile)
+                        viewModel.photoFile.value = photoFile
                         mainFlowNavController?.popBackStack(R.id.addStory, false)
                     }
                 }

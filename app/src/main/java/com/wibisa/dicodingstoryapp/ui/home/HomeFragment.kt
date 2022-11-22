@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
@@ -20,7 +18,6 @@ import com.wibisa.dicodingstoryapp.core.util.*
 import com.wibisa.dicodingstoryapp.databinding.FragmentHomeBinding
 import com.wibisa.dicodingstoryapp.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -44,9 +41,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectStoriesUiState()
-
-        observeLogoutUiState()
+        observeUserPreferencesForGetStories()
 
         componentUiSetup()
     }
@@ -76,17 +71,15 @@ class HomeFragment : Fragment() {
         pagingLoadState()
 
         binding.btnReloadStory.setOnClickListener {
-            collectStoriesUiState()
+            observeUserPreferencesForGetStories()
         }
     }
 
-    private fun collectStoriesUiState() {
-        viewModel.userPreferences.observe(viewLifecycleOwner) { userPreferences ->
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.getAllStories(userPreferences).collectLatest { stories ->
-                        adapter.submitData(stories)
-                    }
+    private fun observeUserPreferencesForGetStories() {
+        lifecycleScope.launch {
+            viewModel.getUserPreferences().observe(viewLifecycleOwner) { userPreferences ->
+                viewModel.getStories(userPreferences).observe(viewLifecycleOwner) { stories ->
+                    adapter.submitData(lifecycle, stories)
                 }
             }
         }
@@ -130,32 +123,25 @@ class HomeFragment : Fragment() {
     }
 
     private fun logout() {
-        viewModel.logout()
-    }
-
-    private fun observeLogoutUiState() {
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.logoutUiState.collect { logoutUi ->
-                    when (logoutUi) {
-                        is ApiResult.Success -> {
-                            binding.loadingIndicator.hide()
-                            baseNavController?.navigate(R.id.action_baseMainFlow_to_baseAuthentication)
-                            requireContext().showToast(logoutUi.data)
-                            viewModel.logoutCompleted()
-                        }
-                        is ApiResult.Loading -> {
-                            binding.loadingIndicator.show()
-                        }
-                        is ApiResult.Error -> {
-                            binding.loadingIndicator.hide()
-                            binding.homeContainer.showShortSnackBar(logoutUi.message)
-                            viewModel.logoutCompleted()
-                        }
-                        else -> {}
+            viewModel.logout().observe(viewLifecycleOwner) { logoutUi ->
+                when (logoutUi) {
+                    is ApiResult.Success -> {
+                        binding.loadingIndicator.hide()
+                        baseNavController?.navigate(R.id.action_baseMainFlow_to_baseAuthentication)
+                        requireContext().showToast(logoutUi.data)
                     }
+                    is ApiResult.Loading -> {
+                        binding.loadingIndicator.show()
+                    }
+                    is ApiResult.Error -> {
+                        binding.loadingIndicator.hide()
+                        binding.homeContainer.showShortSnackBar(logoutUi.message)
+                    }
+                    else -> {}
                 }
             }
         }
     }
+
 }

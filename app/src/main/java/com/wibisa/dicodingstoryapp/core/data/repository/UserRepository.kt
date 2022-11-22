@@ -4,6 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import com.wibisa.dicodingstoryapp.core.data.remote.network.StoryApi
 import com.wibisa.dicodingstoryapp.core.data.remote.response.LoginResult
 import com.wibisa.dicodingstoryapp.core.model.InputLogin
@@ -20,47 +22,50 @@ class UserRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
 
-    suspend fun register(inputRegister: InputRegister): ApiResult<String> {
-        return try {
-            val response = api.register(
-                name = inputRegister.name,
-                email = inputRegister.email,
-                password = inputRegister.password
-            )
+    suspend fun register(inputRegister: InputRegister): LiveData<ApiResult<String>> =
+        liveData {
+            emit(ApiResult.Loading)
+            try {
+                val response = api.register(
+                    name = inputRegister.name,
+                    email = inputRegister.email,
+                    password = inputRegister.password
+                )
 
-            if (!response.error) {
-                ApiResult.Success(response.message)
-            } else {
-                ApiResult.Error(response.message)
+                if (!response.error) {
+                    emit(ApiResult.Success(response.message))
+                } else {
+                    emit(ApiResult.Error(response.message))
+                }
+            } catch (e: Exception) {
+                emit(ApiResult.Error(e.message.toString()))
             }
-        } catch (e: Exception) {
-            ApiResult.Error(e.message.toString())
         }
-    }
 
-    suspend fun login(inputLogin: InputLogin): ApiResult<LoginResult> {
-        return try {
+    suspend fun login(inputLogin: InputLogin): LiveData<ApiResult<LoginResult>> = liveData {
+        emit(ApiResult.Loading)
+        try {
             val response = api.login(
                 email = inputLogin.email,
                 password = inputLogin.password
             )
 
             if (!response.error) {
-                ApiResult.Success(response.loginResult)
+                emit(ApiResult.Success(response.loginResult))
             } else {
-                ApiResult.Error(response.message)
+                emit(ApiResult.Error(response.message))
             }
         } catch (e: Exception) {
-            ApiResult.Error(e.message.toString())
+            emit(ApiResult.Error(e.message.toString()))
         }
     }
 
-    suspend fun logout(): ApiResult<String> {
-        return try {
+    suspend fun logout(): LiveData<ApiResult<String>> = liveData {
+        try {
             clearUserPreferencesFromDataStore()
-            ApiResult.Success("Logout success")
+            emit(ApiResult.Success("Logout success"))
         } catch (e: Exception) {
-            ApiResult.Error(e.message.toString())
+            emit(ApiResult.Error(e.message.toString()))
         }
     }
 
@@ -80,7 +85,9 @@ class UserRepository @Inject constructor(
         return UserPreferences(userId, token, name)
     }
 
-    suspend fun fetchUserPreferences() = mapUserPreferences(dataStore.data.first().toPreferences())
+    suspend fun fetchUserPreferences(): LiveData<UserPreferences> = liveData {
+        emit(mapUserPreferences(dataStore.data.first().toPreferences()))
+    }
 
     private suspend fun clearUserPreferencesFromDataStore() {
         dataStore.edit { it.clear() }

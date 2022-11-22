@@ -1,15 +1,17 @@
 package com.wibisa.dicodingstoryapp.core.data.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.wibisa.dicodingstoryapp.core.data.StoryPagingSource
 import com.wibisa.dicodingstoryapp.core.data.remote.network.StoryApi
 import com.wibisa.dicodingstoryapp.core.data.remote.response.Story
 import com.wibisa.dicodingstoryapp.core.model.UserPreferences
 import com.wibisa.dicodingstoryapp.core.util.ApiResult
 import com.wibisa.dicodingstoryapp.core.util.StringTransform
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -21,7 +23,7 @@ class StoryRepository @Inject constructor(
     private val api: StoryApi
 ) {
 
-    fun getAllStoriesWithPaging(userPreferences: UserPreferences): Flow<PagingData<Story>> {
+    fun getAllStoriesWithPaging(userPreferences: UserPreferences): LiveData<PagingData<Story>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 5
@@ -32,23 +34,24 @@ class StoryRepository @Inject constructor(
                     userPreferences = userPreferences
                 )
             }
-        ).flow
+        ).liveData
     }
 
     suspend fun getAllStoriesWithLocation(
         userPreferences: UserPreferences
-    ): ApiResult<List<Story>> {
-        return try {
+    ): LiveData<ApiResult<List<Story>>> = liveData {
+        emit(ApiResult.Loading)
+        try {
             val token = StringTransform.tokenFormat(userPreferences.token)
             val response = api.getAllStoriesWithLocation(token = token)
 
             if (!response.error) {
-                ApiResult.Success(response.listStory)
+                emit(ApiResult.Success(response.listStory))
             } else {
-                ApiResult.Error(response.message)
+                emit(ApiResult.Error(response.message))
             }
         } catch (e: Exception) {
-            ApiResult.Error(e.message.toString())
+            emit(ApiResult.Error(e.message.toString()))
         }
     }
 
@@ -56,8 +59,9 @@ class StoryRepository @Inject constructor(
         userPreferences: UserPreferences,
         storyDesc: String,
         photoFile: File
-    ): ApiResult<String> {
-        return try {
+    ): LiveData<ApiResult<String>> = liveData {
+        emit(ApiResult.Loading)
+        try {
             val token = StringTransform.tokenFormat(userPreferences.token)
             val photo = MultipartBody.Part.createFormData(
                 "photo", photoFile.name, photoFile.asRequestBody()
@@ -68,12 +72,12 @@ class StoryRepository @Inject constructor(
 
             val response = api.addStory(token = token, photo = photo, description = description)
             if (!response.error) {
-                ApiResult.Success(response.message)
+                emit(ApiResult.Success(response.message))
             } else {
-                ApiResult.Error(response.message)
+                emit(ApiResult.Error(response.message))
             }
         } catch (e: Exception) {
-            ApiResult.Error(e.message.toString())
+            emit(ApiResult.Error(e.message.toString()))
         }
     }
 }
